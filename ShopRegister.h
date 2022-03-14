@@ -13,5 +13,15 @@ struct register_static{
     double discount[max_n];
     double total[max_n];
 };
+struct register_dynamic{
+    int cur_size=0;
+    int max_n;
+    int* num = new int[0];
+    int* barcode= new int[0];
+    int* quantity= new int[0];
+    double* price= new double[0];
+    double* discount= new double[0];
+    double* total= new double [0];
+};
 
 #endif //SIAOD4_SHOPREGISTER_H

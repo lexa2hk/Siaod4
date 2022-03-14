@@ -68,9 +68,87 @@ void delReg(register_static &reg,int reg_index){
     }
 }
 
+void regAddD(register_dynamic *reg,int index=0){
+    reg->cur_size++;
+    int* num = new int[reg->cur_size];
+    int* barcode= new int[reg->cur_size];
+    int* quantity= new int[reg->cur_size];
+    double* price= new double[reg->cur_size];
+    double* discount= new double[reg->cur_size];
+    double* total= new double [reg->cur_size];
+
+    for(int i=0;i<reg->cur_size;i++){
+        if(i<index){
+            num[i] = reg->num[i];
+            quantity[i] = reg->quantity[i];
+            barcode[i] = reg->barcode[i];
+            price[i] = reg->price[i];
+            discount[i] = reg->discount[i];
+            total[i] = reg->total[i];
+        }else if(i==index){
+            cout<<"Введите номер кассы, код товара, количество, цену и скидку\n";
+            cin>>num[i]>>quantity[i]>>barcode[i]>>price[i]>>discount[i];
+        }else{
+            num[i+1] = reg->num[i];
+            quantity[i+1] = reg->quantity[i];
+            barcode[i+1] = reg->barcode[i];
+            price[i+1] = reg->price[i];
+            discount[i+1] = reg->discount[i];
+            total[i+1] = reg->total[i];
+        }
+    }
+    reg->num = num;
+    reg->barcode = barcode;
+    reg->quantity = quantity;
+    reg->price = price;
+    reg->discount = discount;
+    reg->total = total;
+}
+void regPopD(register_dynamic *reg,int index=0){
+    reg->cur_size--;
+    int* num = new int[reg->cur_size];
+    int* barcode= new int[reg->cur_size];
+    int* quantity= new int[reg->cur_size];
+    double* price= new double[reg->cur_size];
+    double* discount= new double[reg->cur_size];
+    double* total= new double [reg->cur_size];
+
+    for(int i=0;i<reg->cur_size;i++){
+        if(i<index){
+            num[i] = reg->num[i];
+            quantity[i] = reg->quantity[i];
+            barcode[i] = reg->barcode[i];
+            price[i] = reg->price[i];
+            discount[i] = reg->discount[i];
+            total[i] = reg->total[i];
+        }else{
+            num[i] = reg->num[i+1];
+            quantity[i] = reg->quantity[i+1];
+            barcode[i] = reg->barcode[i+1];
+            price[i] = reg->price[i+1];
+            discount[i] = reg->discount[i+1];
+            total[i] = reg->total[i+1];
+        }
+    }
+    reg->num = num;
+    reg->barcode = barcode;
+    reg->quantity = quantity;
+    reg->price = price;
+    reg->discount = discount;
+    reg->total = total;
+}
+
+void printRegD(register_dynamic &reg,int reg_index){
+    cout<<"num "<<"code "<<"Q "<<"price "<<"disc "<<"total"<<endl;
+    for(int i=0;i<reg.cur_size;i++){
+        reg.total[i] = reg.quantity[i]*reg.price[i]*(1+ (reg.discount[i]/100.0));
+        if(reg_index == reg.num[i]) cout<<reg.num[i]<<" "<<reg.barcode[i]<<" "<<reg.quantity[i]<<" "<<reg.price[i]<<" "<<reg.discount[i]<<" "<<reg.total[i]<<endl;
+    }
+}
+
 int main() {
     SetConsoleOutputCP(CP_UTF8);
-    register_static reg;
+    /*register_static reg;
     addNote(reg);
     addNote(reg);
     addNote(reg);
@@ -82,6 +160,13 @@ int main() {
 
     printReg(reg, 1);
     delReg(reg,1);
-    printReg(reg, 1);
+    printReg(reg, 1);*/
+
+    register_dynamic reg;
+    regAddD(&reg);
+    printRegD(reg,1);
+    regPopD(&reg,0);
+    printRegD(reg,1);
+
     return 0;
 }
