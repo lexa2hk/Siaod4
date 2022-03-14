@@ -1,6 +1,7 @@
 #include <iostream>
 #include <windows.h>
 #include <iomanip>
+#include <vector>
 #include "ShopRegister.h"
 using namespace std;
 
@@ -21,6 +22,7 @@ void addNote(register_static &reg){
     cin>>reg.num[reg.cur_size]>>reg.barcode[reg.cur_size]>>reg.quantity[reg.cur_size]>>reg.price[reg.cur_size]>>reg.discount[reg.cur_size];
     reg.cur_size++;
 }
+
 void insertNote(register_static &reg,int reg_index){
 
     if(reg.cur_size>=99){
@@ -68,6 +70,8 @@ void delReg(register_static &reg,int reg_index){
     }
 }
 
+//====================================DYNAMIC==================================
+
 void regAddD(register_dynamic *reg,int index=0){
     reg->cur_size++;
     int* num = new int[reg->cur_size];
@@ -104,6 +108,7 @@ void regAddD(register_dynamic *reg,int index=0){
     reg->discount = discount;
     reg->total = total;
 }
+
 void regPopD(register_dynamic *reg,int index=0){
     reg->cur_size--;
     int* num = new int[reg->cur_size];
@@ -146,6 +151,78 @@ void printRegD(register_dynamic &reg,int reg_index){
     }
 }
 
+void insertD(register_dynamic *reg,int num){
+    for(int i=0;i<reg->cur_size;i++){
+        if(reg->num[i] == num) regAddD(reg, i);
+    }
+}
+void removeRegD(register_dynamic *reg,int num){
+    for(int i=0;i<reg->cur_size;i++){
+        if(reg->num[i] == num) regPopD(reg, i);
+    }
+}
+
+//================================VECTOR========================
+void addRowV(register_vector &reg){
+    reg.cur_size++;
+    cout<<"Введите номер кассы, код товара, количество, цену и скидку\n";
+    int temp;
+    cin>>temp;
+    reg.num.push_back(temp);
+    cin>>temp;
+    reg.barcode.push_back(temp);
+    cin>>temp;
+    reg.quantity.push_back(temp);
+
+    double tempd;
+    cin>>tempd;
+    reg.price.push_back(temp);
+    cin>>tempd;
+    reg.discount.push_back(temp);
+    reg.price.push_back(0);
+}
+
+void insert(register_vector &reg,int num){
+    int id,code,quantuty;
+    double price, discount;
+    cout<<"Введите номер кассы для вставки в начало, код товара, количество, цену и скидку\n";
+    cin>>id>>code>>quantuty>>price>>discount;
+    for(int i=0;i<reg.num.size();i++){
+        if(num==reg.num[i]) {
+            reg.cur_size++;
+            reg.num.insert(reg.num.begin()+i,id);
+            reg.barcode.insert(reg.barcode.begin()+i,code);
+            reg.quantity.insert(reg.quantity.begin()+i,quantuty);
+            reg.price.insert(reg.price.begin()+i,price);
+            reg.discount.insert(reg.discount.begin()+i,discount);
+            reg.total.insert(reg.total.begin()+i,(quantuty*price)*(1+discount/100));
+        }
+    }
+}
+void printreg(register_vector reg,int num){
+    for(int i=0;i<reg.num.size();i++){
+        if(reg.num[i]==num){
+            cout<<"num "<<"code "<<"Q "<<"price "<<"disc "<<"total"<<endl;
+            cout<<reg.num[i]<<reg.barcode[i]<<reg.quantity[i]<<reg.price[i]<<reg.discount[i]<<reg.total[i]<<endl;
+        }
+    }
+}
+
+void removereg(register_vector reg, int num){
+    for(int i=0;i<reg.num.size();i++){
+        if(reg.num[i]==num){
+            reg.cur_size--;
+            reg.num.erase(reg.num.begin()+i);
+            reg.barcode.erase(reg.barcode.begin()+i);
+            reg.quantity.erase(reg.quantity.begin()+i);
+            reg.price.erase(reg.price.begin()+i);
+            reg.discount.erase(reg.discount.begin()+i);
+            reg.total.erase(reg.total.begin()+i);
+
+        }
+    }
+}
+
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     /*register_static reg;
@@ -162,11 +239,11 @@ int main() {
     delReg(reg,1);
     printReg(reg, 1);*/
 
-    register_dynamic reg;
+    /*register_dynamic reg;
     regAddD(&reg);
     printRegD(reg,1);
     regPopD(&reg,0);
-    printRegD(reg,1);
+    printRegD(reg,1);*/
 
     return 0;
 }

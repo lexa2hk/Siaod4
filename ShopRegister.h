@@ -2,6 +2,8 @@
 
 #ifndef SIAOD4_SHOPREGISTER_H
 #define SIAOD4_SHOPREGISTER_H
+#include <vector>
+using namespace std;
 
 struct register_static{
     int cur_size=0;
@@ -22,6 +24,17 @@ struct register_dynamic{
     double* price= new double[0];
     double* discount= new double[0];
     double* total= new double [0];
+};
+
+struct register_vector{
+    int cur_size=0;
+    int max_n;
+    vector <int> num;
+    vector <int> barcode;
+    vector <int> quantity;
+    vector <double> price;
+    vector <double> discount;
+    vector <double> total;
 };
 
 #endif //SIAOD4_SHOPREGISTER_H
