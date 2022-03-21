@@ -91,7 +91,8 @@ void regAddD(register_dynamic *reg,int index=0){
             total[i] = reg->total[i];
         }else if(i==index){
             cout<<"Введите номер кассы, код товара, количество, цену и скидку\n";
-            cin>>num[i]>>quantity[i]>>barcode[i]>>price[i]>>discount[i];
+            cin>>num[i]>>barcode[i]>>quantity[i]>>price[i]>>discount[i];
+            total[i] = quantity[i]*price[i]*(1- (discount[i]/100));
         }else{
             num[i+1] = reg->num[i];
             quantity[i+1] = reg->quantity[i];
@@ -164,6 +165,7 @@ void removeRegD(register_dynamic *reg,int num){
 
 //================================VECTOR========================
 void addRowV(register_vector &reg){
+    double total=1;
     reg.cur_size++;
     cout<<"Введите номер кассы, код товара, количество, цену и скидку\n";
     int temp;
@@ -173,77 +175,230 @@ void addRowV(register_vector &reg){
     reg.barcode.push_back(temp);
     cin>>temp;
     reg.quantity.push_back(temp);
+    total*=temp;
 
     double tempd;
     cin>>tempd;
-    reg.price.push_back(temp);
+    reg.price.push_back(tempd);
+    total*=tempd;
     cin>>tempd;
-    reg.discount.push_back(temp);
-    reg.price.push_back(0);
+    reg.discount.push_back(tempd);
+    total*=(1- (tempd/100));
+    reg.total.push_back(total);
 }
 
-void insert(register_vector &reg,int num){
-    int id,code,quantuty;
+void insertV(register_vector &reg,int num){
+    int code,quantuty;
     double price, discount;
-    cout<<"Введите номер кассы для вставки в начало, код товара, количество, цену и скидку\n";
-    cin>>id>>code>>quantuty>>price>>discount;
-    for(int i=0;i<reg.num.size();i++){
+    cout<<"Введите код товара, количество, цену и скидку\n";
+    cin>>code>>quantuty>>price>>discount;
+    for(int i=0;i<reg.cur_size;i++){
         if(num==reg.num[i]) {
             reg.cur_size++;
-            reg.num.insert(reg.num.begin()+i,id);
+            reg.num.insert(reg.num.begin()+i,num);
             reg.barcode.insert(reg.barcode.begin()+i,code);
             reg.quantity.insert(reg.quantity.begin()+i,quantuty);
             reg.price.insert(reg.price.begin()+i,price);
             reg.discount.insert(reg.discount.begin()+i,discount);
-            reg.total.insert(reg.total.begin()+i,(quantuty*price)*(1+discount/100));
+            reg.total.insert(reg.total.begin()+i,(quantuty*price)*(1-discount/100));
+            break;
         }
     }
 }
-void printreg(register_vector reg,int num){
-    for(int i=0;i<reg.num.size();i++){
+void printregV(register_vector reg,int num){
+    //cout<<reg.cur_size<<endl;
+    cout<<"num "<<"code "<<"Q "<<"price "<<"disc "<<"total"<<endl;
+    for(int i=0;i<reg.cur_size;i++){
         if(reg.num[i]==num){
-            cout<<"num "<<"code "<<"Q "<<"price "<<"disc "<<"total"<<endl;
-            cout<<reg.num[i]<<reg.barcode[i]<<reg.quantity[i]<<reg.price[i]<<reg.discount[i]<<reg.total[i]<<endl;
+
+            cout<<reg.num[i]<<" "<<reg.barcode[i]<<" "<<reg.quantity[i]<<" "<<reg.price[i]<<" "<<reg.discount[i]<<" "<<reg.total[i]<<endl;
         }
     }
 }
 
-void removereg(register_vector reg, int num){
-    for(int i=0;i<reg.num.size();i++){
+void removeregV(register_vector &reg, int num){
+    for(int i=0;i<reg.cur_size;i++){
         if(reg.num[i]==num){
             reg.cur_size--;
+            i--;
             reg.num.erase(reg.num.begin()+i);
             reg.barcode.erase(reg.barcode.begin()+i);
             reg.quantity.erase(reg.quantity.begin()+i);
             reg.price.erase(reg.price.begin()+i);
             reg.discount.erase(reg.discount.begin()+i);
             reg.total.erase(reg.total.begin()+i);
-
         }
     }
 }
 
-int main() {
+
+int main(){
     SetConsoleOutputCP(CP_UTF8);
-    /*register_static reg;
-    addNote(reg);
-    addNote(reg);
-    addNote(reg);
+    int work = -1;
+    int choose = 100;
+    while (work != 0) {
+        system("cls");
+        cout << "Лабораторная работа №4 ИКБО-13-21 Смольников А.Б. Вариант 20" << endl << endl;
+        cout << "Касса магазина. Структура записи операции по кассе: номер кассы, код товара, количество товара, цена товара, процентная скидка на товар, сумма за товар с учетом скидки.\n"
+                "Операции:\n"
+                "Заполнение записи по одной операции с клавиатуры.\n"
+                "Вставить записи по отдельной операции, проведенной кассой, в таблицу, располагая ее в начале списка других операций, проведенных этой кассой. \n"
+                "Вывести список операций, проведенных заданной кассой, с указанием стоимости покупки по каждой операции.\n"
+                "Удалить записи по операциям, проведенным определенной кассой."<<endl;
+        cout << "Меню\n";
+        cout << "Задание 1 (Статический массив)" << endl;
+        cout << "Задание 2 (Динамический массив)" << endl;
+        cout << "Задание 3 (Вектор)" << endl;
+        cout << "0) Выход\n";
+        cout << "Ваш выбор: ";
+        cin >> work;
+        system("cls");
+        cout << "Лабораторная работа №3 ИКБО-13-21 Смольников А.Б. Вариант 20" << endl << endl;
 
-    cout<<"Введите номер кассы, для которой нужно вставить запись\n";
-    int reg_index;
-    cin>>reg_index;
-    insertNote(reg,reg_index);
 
-    printReg(reg, 1);
-    delReg(reg,1);
-    printReg(reg, 1);*/
 
-    /*register_dynamic reg;
-    regAddD(&reg);
-    printRegD(reg,1);
-    regPopD(&reg,0);
-    printRegD(reg,1);*/
 
-    return 0;
+
+        switch (work) {
+            case 1: {
+                register_static reg;
+
+                while(choose!=0){
+                    cout << "Касса магазина. Структура записи операции по кассе: номер кассы, код товара, количество товара, цена товара, процентная скидка на товар, сумма за товар с учетом скидки.\n";
+                    cout << "1 Заполнение записи по одной операции с клавиатуры.\n"<<endl;
+                    cout << "2 Вставить записи по отдельной операции, проведенной кассой, в таблицу, располагая ее в начале списка других операций, проведенных этой кассой. \n"<<endl;
+                    cout << "3 Вывести список операций, проведенных заданной кассой, с указанием стоимости покупки по каждой операции.\n"<<endl;
+                    cout<<"4 Удалить записи по операциям, проведенным определенной кассой."<<endl;
+                    cout<<"Введите номер операции\n";
+                    cin>>choose;
+                    switch (choose) {
+                        case 1: {
+                            addNote(reg);
+                            break;
+                        }
+                        case 2: {
+                            cout<<"Введите номер кассы, для которой нужно вставить запись\n";
+                            int reg_index;
+                            cin>>reg_index;
+                            insertNote(reg,reg_index);
+                            break;
+                        }
+                        case 3: {
+                            cout<<"Введите номер кассы, записи которой нужно вывести\n";
+                            int temp;
+                            cin>>temp;
+                            printReg(reg, temp);
+                            break;
+                        }
+                        case 4: {
+                            cout<<"Введите номер кассы, записи которой нужно удалить\n";
+                            int temp;
+                            cin>>temp;
+                            delReg(reg, temp);
+                            break;
+                        }
+                        default:{
+                            break;
+                        }
+                    }
+                }
+
+                break;
+            }
+            case 2: {
+                register_dynamic reg;
+                cout << "Задание 2 (динамический массив)" << endl;
+                while (choose>0){
+                    cout << "Касса магазина. Структура записи операции по кассе: номер кассы, код товара, количество товара, цена товара, процентная скидка на товар, сумма за товар с учетом скидки.\n";
+                    cout << "1 Заполнение записи по одной операции с клавиатуры.\n"<<endl;
+                    cout << "2 Вставить записи по отдельной операции, проведенной кассой, в таблицу, располагая ее в начале списка других операций, проведенных этой кассой. \n"<<endl;
+                    cout << "3 Вывести список операций, проведенных заданной кассой, с указанием стоимости покупки по каждой операции.\n"<<endl;
+                    cout<<"4 Удалить записи по операциям, проведенным определенной кассой."<<endl;
+                    cout<<"Введите номер операции\n";
+                    cin>>choose;
+                    switch (choose) {
+                        case 1: {
+                            regAddD(&reg);
+                            break;
+                        }
+                        case 2: {
+                            cout<<"Введите номер кассы, для которой нужно вставить запись\n";
+                            int reg_index;
+                            cin>>reg_index;
+                            insertD(&reg,reg_index);
+                            break;
+                        }
+                        case 3: {
+                            cout<<"Введите номер кассы, записи которой нужно вывести\n";
+                            int temp;
+                            cin>>temp;
+                            printRegD(reg, temp);
+                            break;
+                        }
+                        case 4: {
+                            cout<<"Введите номер кассы, записи которой нужно удалить\n";
+                            int temp;
+                            cin>>temp;
+                            regPopD(&reg, temp);
+                            break;
+                        }
+                        default:{
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+            case 3: {
+                register_vector reg;
+                cout << "Задание 3 (вектор)" << endl;
+                choose = -1;
+                while (choose!=0){
+                    cout << "Касса магазина. Структура записи операции по кассе: номер кассы, код товара, количество товара, цена товара, процентная скидка на товар, сумма за товар с учетом скидки.\n";
+                    cout << "1 Заполнение записи по одной операции с клавиатуры.\n"<<endl;
+                    cout << "2 Вставить записи по отдельной операции, проведенной кассой, в таблицу, располагая ее в начале списка других операций, проведенных этой кассой. \n"<<endl;
+                    cout << "3 Вывести список операций, проведенных заданной кассой, с указанием стоимости покупки по каждой операции.\n"<<endl;
+                    cout<<"4 Удалить записи по операциям, проведенным определенной кассой."<<endl;
+                    cout<<"Введите номер операции\n";
+                    cin>>choose;
+                    switch (choose) {
+                        case 1: {
+                            addRowV(reg);
+                            break;
+                        }
+                        case 2: {
+                            cout<<"Введите номер кассы, для которой нужно вставить запись\n";
+                            int reg_index;
+                            cin>>reg_index;
+                            insertV(reg,reg_index);
+                            break;
+                        }
+                        case 3: {
+                            cout<<"Введите номер кассы, записи которой нужно вывести\n";
+                            int temp;
+                            cin>>temp;
+                            printregV(reg, temp);
+                            break;
+                        }
+                        case 4: {
+                            cout<<"Введите номер кассы, записи которой нужно удалить\n";
+                            int temp;
+                            cin>>temp;
+                            removeregV(reg, temp);
+                            break;
+                        }
+                        default:{
+                            break;
+                        }
+                    }
+                }
+
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+        return 0;
+    }
 }
